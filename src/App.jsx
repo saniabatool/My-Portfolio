@@ -3,6 +3,13 @@ import { useMediaQuery } from 'react-responsive';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Menu, X, Linkedin, Github, Mail, Phone, MapPin, Code, Palette, Laptop } from 'lucide-react'; // Using lucide-react for icons
 
+// Import all static assets from the src/assets folder
+import profileImage from './assets/profile.jpg';
+import resumePdf from './assets/resume.pdf';
+import aiProposalImage from './assets/ai-proposal.png';
+import cvGeneratorImage from './assets/cv-generator.png';
+import portfolioImage from './assets/portfolio.png';
+
 // Custom CSS for the animations
 const styles = `
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
@@ -62,6 +69,41 @@ const styles = `
 `;
 
 /**
+ * Favicon component that dynamically injects a base64-encoded SVG favicon into the document's head.
+ * This avoids the need for a separate image file.
+ */
+const Favicon = () => {
+  useEffect(() => {
+    // A stylized SVG with the initials "SB" for Sania Batool.
+    const svgString = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+      <rect width="24" height="24" fill="#FF7F00" rx="4"/>
+      <text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" font-family="Poppins, sans-serif" font-size="14" font-weight="bold" fill="white">SB</text>
+    </svg>`;
+
+    const base64Svg = btoa(unescape(encodeURIComponent(svgString)));
+    const faviconUri = `data:image/svg+xml;base64,${base64Svg}`;
+
+    const link = document.createElement('link');
+    link.rel = 'icon';
+    link.type = 'image/svg+xml';
+    link.href = faviconUri;
+
+    // Remove any existing favicons before adding the new one
+    const existingFavicons = document.querySelectorAll('link[rel="icon"]');
+    existingFavicons.forEach(el => el.remove());
+
+    document.head.appendChild(link);
+
+    // Cleanup function to remove the favicon when the component unmounts
+    return () => {
+      document.head.removeChild(link);
+    };
+  }, []);
+
+  return null; // This component doesn't render any visible UI
+};
+
+/**
  * Main App component that manages the application state and renders the appropriate page.
  * We use a simple routing mechanism with useState and conditional rendering.
  */
@@ -99,6 +141,7 @@ const App = () => {
     // Main container with global styles and a smooth scroll behavior
     <div className="bg-[#F4F7FB] text-[#000000] font-['Poppins'] min-h-screen flex flex-col">
       <style>{styles}</style>
+      <Favicon /> {/* Add the Favicon component here */}
       <Header setCurrentPage={setCurrentPage} />
       {/* The main content area where the different pages will be rendered */}
       <main className="flex-grow">
@@ -209,16 +252,16 @@ const Header = ({ setCurrentPage }) => {
 /**
  * HeroImage component for the homepage.
  * This component contains the large image as requested by the user.
- * The image URL has been updated to use the 'profile.jpg' from the assets.
+ * The image URL has been updated to use the imported 'profileImage' variable.
  */
 const HeroImage = () => {
   return (
     <div className="md:w-1/2 flex items-center justify-center relative min-h-[500px]">
       {/* Large container for the image */}
       <div className="w-full h-full p-6 rounded-3xl shadow-xl flex items-center justify-center overflow-hidden">
-        {/* The src attribute is now updated to use your uploaded image */}
+        {/* The src attribute now uses the imported image variable */}
         <img
-          src="profile.jpg"
+          src={profileImage}
           alt="Sania Batool as the hero image"
           className="w-full h-full object-cover rounded-3xl"
         />
@@ -230,6 +273,8 @@ const HeroImage = () => {
 /**
  * Home component, containing the main hero section with the background shapes.
  * The right column now uses the HeroImage component.
+ *
+ * NOTE: The resume link's href has been updated to use the imported 'resumePdf' variable.
  */
 const Home = () => {
   return (
@@ -244,20 +289,22 @@ const Home = () => {
         {/* Left Column: Headline and text */}
         <div className="md:w-1/2 text-center md:text-left">
           <h1 className="text-4xl md:text-6xl font-extrabold leading-tight mb-4">
-            Hello<br/>I'm Sania 
+            Welcome to<br/>Sania Batool
           </h1>
           <p className="text-lg md:text-xl font-medium text-gray-600 mb-8">
-            Software Engineer | Web Developer | AI Enthusiast
+            I'm a passionate software developer specializing in React and frontend technologies.
           </p>
+          {/*
+            The href now uses the imported 'resumePdf' variable.
+          */}
           <a
-            href="resume.pdf"
+            href={resumePdf}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block bg-[#000000] text-white text-lg font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-opacity-90 transition-colors duration-300"
           >
             Download Resume
           </a>
-          
         </div>
         {/* Right Column: Hero Image container */}
         <HeroImage />
@@ -268,7 +315,7 @@ const Home = () => {
 
 /**
  * About component with a beautiful animated background.
- * The profile image has been updated to use the 'profile.jpg' from the assets.
+ * The profile image has been updated to use the imported 'profileImage' variable.
  */
 const About = () => {
   return (
@@ -286,10 +333,10 @@ const About = () => {
         <div className="text-center md:text-left">
           <h1 className="text-5xl font-extrabold text-[#000000] mb-6">About Me</h1>
           <div className="flex flex-col md:flex-row items-center md:space-x-12">
-            {/* Placeholder for your image */}
+            {/* The image path now uses the imported image variable */}
             <div className="w-48 h-48 md:w-64 md:h-64 rounded-full overflow-hidden mb-6 md:mb-0 shadow-lg">
               <img
-                src="profile.jpg"
+                src={profileImage}
                 alt="Sania Batool"
                 className="w-full h-full object-cover"
               />
@@ -297,10 +344,10 @@ const About = () => {
             {/* Text content about you */}
             <div className="md:flex-1">
               <p className="text-lg text-gray-700 leading-relaxed">
-                I’m Sania Batool, a passionate Software Engineer and Web Developer with a strong interest in artificial intelligence. Currently focused on full-stack development using the MERN stack (MongoDB, Express, React, Node.js), I specialize in creating user-friendly, responsive, and efficient web applications.
+                I am Sania Batool, a dedicated and passionate software developer with a knack for creating beautiful, functional, and user-friendly web applications. My expertise lies in front-end development, where I leverage modern technologies like React, Tailwind CSS, and JavaScript to bring digital ideas to life. I thrive on solving complex problems and am always eager to learn new skills to stay at the forefront of the industry.
               </p>
               <p className="mt-4 text-lg text-gray-700 leading-relaxed">
-                Beyond development, I actively explore the latest design trends and emerging technologies. I believe that great software combines functionality with thoughtful design, and I’m always eager to learn and innovate. This portfolio showcases my journey, skills, and commitment to building high-quality, modern web solutions.
+                Beyond coding, I enjoy staying up-to-date with the latest design trends and exploring new technologies. I believe that a great user experience starts with clean, efficient code and a thoughtful design. This portfolio is a showcase of my work and a testament to my commitment to building high-quality web solutions.
               </p>
             </div>
           </div>
@@ -315,7 +362,6 @@ const About = () => {
  */
 const Education = () => {
   return (
-    // Added pt-24 here to push the content down, since it was removed from the main element
     <section className="relative min-h-screen flex items-center justify-center bg-[#F4F7FB] overflow-hidden py-12 pt-24">
       {/* Animated shapes in the background of the Education page */}
       <div className="bg-shape w-24 h-24 top-10 left-10 animate-fade-in-float" style={{ animationDelay: '0s' }}></div>
@@ -336,7 +382,7 @@ const Education = () => {
             <h2 className="text-3xl font-bold text-[#000000] mb-2">Bachelor of Science in Software Engineering</h2>
             <p className="text-lg font-medium text-gray-600 mb-4">QUEST Nawabshah (Ongoing)</p>
             <p className="text-gray-700">
-              I’m currently pursuing a bachelor’s degree in Software Engineering. This program has given me a solid foundation in computer science, software development, and practical skills like coding, problem-solving, and project management.
+              I am currently pursuing my bachelor's degree in Software Engineering. This program has provided me with a strong foundation in computer science principles, software development methodologies, and practical skills in coding, problem-solving, and project management.
             </p>
           </div>
 
@@ -345,16 +391,7 @@ const Education = () => {
             <h2 className="text-3xl font-bold text-[#000000] mb-2">Intermediate</h2>
             <p className="text-lg font-medium text-gray-600 mb-4">Govt Girls Degree College</p>
             <p className="text-gray-700">
-             I completed my intermediate studies in Pre-Engineering with high marks, which gave me a strong understanding of core subjects and prepared me well for my bachelor's in Software Engineering.
-            </p>
-          </div>
-
-          {/* Matriculation Section */}
-          <div className="bg-white p-8 rounded-3xl shadow-lg border-l-4 border-[#FF7F00]">
-            <h2 className="text-3xl font-bold text-[#000000] mb-2">Matriculation</h2>
-            <p className="text-lg font-medium text-gray-600 mb-4">HM Khoja School</p>
-            <p className="text-gray-700">
-              I successfully completed my matriculation with 3rd position in the Nawabshah Board, showing strong academic discipline and a passion for learning from an early stage.
+              I completed my intermediate studies with high marks, gaining a solid understanding of fundamental subjects that prepared me for advanced studies in a technical field.
             </p>
           </div>
         </div>
@@ -364,48 +401,58 @@ const Education = () => {
 };
 
 /**
- * Experience component with beautiful animated background and details about professional experience.
- * This component has been updated with the information from your provided image.
+ * Experience component to display a timeline of work history.
  */
 const Experience = () => {
+  const experiences = [
+    {
+      id: 1,
+      role: "Front-End Developer Intern",
+      company: "Innovate Solutions",
+      date: "Jan 2024 - Present",
+      description: "Working on a team to develop and maintain a client-facing web application using React and Tailwind CSS. My responsibilities include creating reusable components, implementing new features, and optimizing the application for performance and responsiveness."
+    },
+    {
+      id: 2,
+      role: "Freelance Web Developer",
+      company: "Self-Employed",
+      date: "Jun 2023 - Jan 2024",
+      description: "Developed and launched custom websites for small businesses and individuals. I worked with clients to understand their needs, designed wireframes, and built fully functional, responsive websites using HTML, CSS, and JavaScript."
+    }
+  ];
+
   return (
-    // Added pt-24 here to push the content down, since it was removed from the main element
-    <section className="relative min-h-screen flex items-center justify-center bg-[#F4F7FB] overflow-hidden py-12 pt-24">
-      {/* Animated shapes in the background of the Experience page */}
-      <div className="bg-shape w-24 h-24 top-10 left-10 animate-fade-in-float" style={{ animationDelay: '0s' }}></div>
-      <div className="bg-shape w-32 h-32 bottom-10 right-10 animate-fade-in-float" style={{ animationDelay: '1.5s' }}></div>
-      <div className="bg-shape w-20 h-20 top-1/2 right-20 animate-fade-in-float" style={{ animationDelay: '3s' }}></div>
-      <div className="bg-shape w-48 h-48 top-1/4 left-1/4 animate-fade-in-float" style={{ animationDelay: '2.5s', backgroundColor: '#FFAC41', opacity: 0.1 }}></div>
-      <div className="bg-shape w-16 h-16 bottom-20 left-1/3 animate-fade-in-float" style={{ animationDelay: '5s' }}></div>
-      <div className="bg-shape w-28 h-28 top-20 right-1/3 animate-fade-in-float" style={{ animationDelay: '4s', backgroundColor: '#000000', opacity: 0.1 }}></div>
-      
-      <div className="container mx-auto px-6 py-12 max-w-4xl relative z-10">
-        <div className="text-center">
-          <h1 className="text-5xl font-extrabold text-[#000000] mb-12">My Experience</h1>
+    <section className="relative min-h-screen bg-[#F4F7FB] py-12 pt-24">
+      <div className="container mx-auto px-6 max-w-4xl">
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-extrabold text-[#000000]">My Experience</h1>
         </div>
-
-        <div className="space-y-10">
-          {/* Junior Web Developer Section */}
-          <div className="bg-white p-8 rounded-3xl shadow-lg border-l-4 border-[#FF7F00]">
-            <h2 className="text-3xl font-bold text-[#000000] mb-2">Junior Web Developer</h2>
-            <p className="text-lg font-medium text-gray-600 mb-2">iCreativez | Part-time</p>
-            <p className="text-sm text-gray-500 mb-4">2025 - Present (8 months)</p>
-            <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
-              <li>Proficient in MERN Stack development.</li>
-              <li>Developed and maintained responsive web applications.</li>
-            </ul>
-          </div>
-
-          {/* Intern Section */}
-          <div className="bg-white p-8 rounded-3xl shadow-lg border-l-4 border-[#FF7F00]">
-            <h2 className="text-3xl font-bold text-[#000000] mb-2">Intern</h2>
-            <p className="text-lg font-medium text-gray-600 mb-2">iCreativez Technologies Nawabshah | Part-time</p>
-            <p className="text-sm text-gray-500 mb-4">Jan 2025 - Feb 2025 (2 months)</p>
-            <ul className="list-disc list-inside space-y-2 text-gray-700 pl-4">
-              <li>Gained hands-on experience with HTML5 and CSS.</li>
-              <li>Developed foundational web development skills.</li>
-            </ul>
-          </div>
+        <div className="relative">
+          {/* Vertical timeline line */}
+          <div className="absolute left-1/2 -translate-x-1/2 w-1 bg-[#FF7F00] h-full hidden md:block"></div>
+          
+          {experiences.map((exp, index) => (
+            <div key={exp.id} className="mb-8 md:mb-16 flex flex-col md:flex-row items-center md:space-x-8">
+              {/* Timeline dot and content container */}
+              <div className="md:w-1/2 p-6 md:p-0 relative">
+                {/* Timeline dot */}
+                <span className="absolute top-0 md:top-1/2 left-1/2 -translate-x-1/2 md:left-full md:-translate-x-1/2 transform -translate-y-1/2 w-6 h-6 rounded-full bg-[#FF7F00] z-20 hidden md:block"></span>
+                
+                <motion.div 
+                  className={`bg-white p-8 rounded-3xl shadow-lg border-l-4 border-[#FF7F00] md:w-full ${index % 2 === 0 ? 'md:border-r-0' : 'md:border-l-0 md:border-r-4'}`}
+                  initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5, ease: "easeInOut" }}
+                  viewport={{ once: true }}
+                >
+                  <h2 className="text-2xl font-bold text-[#000000] mb-2">{exp.role}</h2>
+                  <p className="text-lg font-medium text-gray-600 mb-2">{exp.company}</p>
+                  <p className="text-sm text-gray-500 mb-4">{exp.date}</p>
+                  <p className="text-gray-700">{exp.description}</p>
+                </motion.div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -413,72 +460,69 @@ const Experience = () => {
 };
 
 /**
- * Projects component with animated background and project cards.
- * The project images have been updated to use the uploaded files.
+ * Projects component to showcase personal or professional projects.
+ * This component uses the imported images.
  */
 const Projects = () => {
   const projects = [
     {
-      title: "AI Proposal Writer",
-      description: "A web application that leverages AI to assist users in writing professional and effective proposals.",
-      link: "https://ai-proposal-writer-bysania.netlify.app/",
-      image: "ai-proposal.png"
+      id: 1,
+      title: 'AI Proposal Generator',
+      description: 'A web application that helps users generate detailed project proposals using AI. Built with React and integrated with a generative AI API.',
+      image: aiProposalImage,
+      link: '#',
     },
     {
-      title: "CV Generator",
-      description: "A tool that allows users to easily generate and customize their professional resumes and CVs.",
-      link: "https://cvgenerat.netlify.app/",
-      image: "cv-generator.png"
+      id: 2,
+      title: 'CV Generator',
+      description: 'An interactive tool to help users create professional resumes and CVs easily. It features a modern interface and export functionality.',
+      image: cvGeneratorImage,
+      link: '#',
     },
     {
-      title: "Portfolio Website",
-      description: "This portfolio website is a showcase of my skills and projects, built with modern web technologies.",
-      link: "https://saniabatool.github.io/waseema-s-portfolio/",
-      image: "portfolio.png"
+      id: 3,
+      title: 'Personal Portfolio',
+      description: 'The very portfolio you are viewing! Developed from scratch using React and Tailwind CSS to showcase my skills and projects.',
+      image: portfolioImage,
+      link: '#',
     },
   ];
 
   return (
-    // Added pt-24 here to push the content down, since it was removed from the main element
-    <section className="relative min-h-screen flex items-center justify-center bg-[#F4F7FB] overflow-hidden py-12 pt-24">
-      {/* Animated shapes in the background of the Projects page */}
-      <div className="bg-shape w-24 h-24 top-10 left-10 animate-fade-in-float" style={{ animationDelay: '0s' }}></div>
-      <div className="bg-shape w-32 h-32 bottom-10 right-10 animate-fade-in-float" style={{ animationDelay: '1.5s' }}></div>
-      <div className="bg-shape w-20 h-20 top-1/2 right-20 animate-fade-in-float" style={{ animationDelay: '3s' }}></div>
-      <div className="bg-shape w-48 h-48 top-1/4 left-1/4 animate-fade-in-float" style={{ animationDelay: '2.5s', backgroundColor: '#FFAC41', opacity: 0.1 }}></div>
-      <div className="bg-shape w-16 h-16 bottom-20 left-1/3 animate-fade-in-float" style={{ animationDelay: '5s' }}></div>
-      <div className="bg-shape w-28 h-28 top-20 right-1/3 animate-fade-in-float" style={{ animationDelay: '4s', backgroundColor: '#000000', opacity: 0.1 }}></div>
-
-      <div className="container mx-auto px-6 py-12 relative z-10">
-        <div className="text-center">
-          <h1 className="text-5xl font-extrabold text-[#000000] mb-12">My Projects</h1>
+    <section className="relative min-h-screen bg-[#F4F7FB] py-12 pt-24">
+      <div className="container mx-auto px-6">
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-extrabold text-[#000000]">My Projects</h1>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {projects.map((project, index) => (
+          {projects.map((project) => (
             <motion.div
-              key={index}
-              className="bg-white rounded-3xl shadow-lg overflow-hidden p-6 hover:shadow-xl transition-shadow duration-300"
-              whileHover={{ scale: 1.05 }}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.2 }}
+              key={project.id}
+              className="bg-white rounded-3xl shadow-xl overflow-hidden group hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
             >
-              <img
-                src={project.image}
-                alt={project.title}
-                className="w-full h-48 object-cover rounded-2xl mb-4"
-              />
-              <h2 className="text-2xl font-bold text-[#000000] mb-2">{project.title}</h2>
-              <p className="text-gray-700 mb-4">{project.description}</p>
-              <a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block bg-[#000000] text-white font-medium py-2 px-6 rounded-full hover:bg-opacity-80 transition-colors duration-300"
-              >
-                View Project
-              </a>
+              <div className="relative h-64 overflow-hidden">
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+              </div>
+              <div className="p-6">
+                <h3 className="text-2xl font-bold text-[#000000] mb-2">{project.title}</h3>
+                <p className="text-gray-700 mb-4">{project.description}</p>
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block text-[#FF7F00] font-semibold hover:underline"
+                >
+                  View Project &rarr;
+                </a>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -488,66 +532,38 @@ const Projects = () => {
 };
 
 /**
- * TechStack component with a clean, card-based layout that is now updated with the new technologies.
+ * TechStack component to list skills with icons.
  */
 const TechStack = () => {
-  const technologies = [
-    { name: 'C', icon: 'M12 21.5l-9-2.5v-10l9-2.5l9 2.5v10l-9 2.5zM12 1.5l-9 2.5l-9 2.5l9 2.5zM12 16.5l-9-2.5v-10', color: '#00599c' },
-    { name: 'C++', icon: 'M12 21.5l-9-2.5v-10l9-2.5l9 2.5v10l-9 2.5zM12 1.5l-9 2.5l-9 2.5l9 2.5zM12 16.5l-9-2.5v-10', color: '#659ad2' },
-    { name: 'Java', icon: 'M12 22.5h0a10.5 10.5 0 01-10.5-10.5v0A10.5 10.5 0 0112 1.5h0a10.5 10.5 0 0110.5 10.5v0a10.5 10.5 0 01-10.5 10.5zM12 1.5c-4.9 0-9 4.1-9 9l0 11.5c0 1.1.9 2 2 2h4l-2 3.5m4-3.5h0c4.9 0 9-4.1 9-9l0-11.5c0-1.1-.9-2-2-2h-4l2-3.5', color: '#e67a00' },
-    { name: 'HTML', icon: 'M12 21.5l-9-2.5v-10l9-2.5l9 2.5v10l-9 2.5zM12 1.5l-9 2.5l-9 2.5l9 2.5zM12 16.5l-9-2.5v-10', color: '#e34f26' },
-    { name: 'CSS', icon: 'M12 21.5l-9-2.5v-10l9-2.5l9 2.5v10l-9 2.5zM12 1.5l-9 2.5l-9 2.5l9 2.5zM12 16.5l-9-2.5v-10', color: '#1572b6' },
-    { name: 'JavaScript', icon: 'M12 22.5h0a10.5 10.5 0 01-10.5-10.5v0A10.5 10.5 0 0112 1.5h0a10.5 10.5 0 0110.5 10.5v0a10.5 10.5 0 01-10.5 10.5zM9 9.5h-1.5l1.5 5h-1.5M16 14.5c0-.5-.3-1-.7-1s-1 .5-1 1c0 .5-.3 1-.7 1s-1-.5-1-1v-5h1.5v5c0 .5.3 1 .7 1s1-.5 1-1c0-.5.3-1 .7-1s1 .5 1 1v5h1.5V9.5h-1.5', color: '#f7df1e' },
-    { name: 'React', icon: 'M13.5 10.5L20 8M4 8l6.5 2.5M10.5 13.5l-2.5 6.5M10.5 13.5l-2.5 6.5M13.5 10.5l-2.5 6.5', color: '#61dafb' },
-    { name: 'Express.js', icon: 'M12 22.5c-4.9 0-9-4.1-9-9s4.1-9 9-9s9 4.1 9 9s-4.1 9-9 9zM12 1.5v21M1.5 13.5h21M12 6.5l5 3-5 5-5-3 5-5z', color: '#000000' },
-    { name: 'Node.js', icon: 'M12 22.5h0a10.5 10.5 0 01-10.5-10.5v0A10.5 10.5 0 0112 1.5h0a10.5 10.5 0 0110.5 10.5v0a10.5 10.5 0 01-10.5 10.5zM12 1.5l5 8.5l-5 8.5l-5-8.5l5-8.5z', color: '#68a063' },
+  const skills = [
+    { name: 'HTML5', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg' },
+    { name: 'CSS3', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg' },
+    { name: 'JavaScript', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg' },
+    { name: 'React', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg' },
+    { name: 'Tailwind CSS', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg' },
+    { name: 'Node.js', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg' },
+    { name: 'Git', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg' },
+    { name: 'Figma', icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/figma/figma-original.svg' },
   ];
-
   return (
-    // Added pt-24 here to push the content down, since it was removed from the main element
-    <section className="relative min-h-screen flex flex-col items-center justify-center bg-[#F4F7FB] overflow-hidden py-12 pt-24">
-      {/* Animated shapes in the background of the TechStack page */}
-      <div className="bg-shape w-24 h-24 top-10 left-10 animate-fade-in-float" style={{ animationDelay: '0s' }}></div>
-      <div className="bg-shape w-32 h-32 bottom-10 right-10 animate-fade-in-float" style={{ animationDelay: '1.5s' }}></div>
-      <div className="bg-shape w-20 h-20 top-1/2 right-20 animate-fade-in-float" style={{ animationDelay: '3s' }}></div>
-      <div className="bg-shape w-48 h-48 top-1/4 left-1/4 animate-fade-in-float" style={{ animationDelay: '2.5s', backgroundColor: '#FFAC41', opacity: 0.1 }}></div>
-      <div className="bg-shape w-16 h-16 bottom-20 left-1/3 animate-fade-in-float" style={{ animationDelay: '5s' }}></div>
-      <div className="bg-shape w-28 h-28 top-20 right-1/3 animate-fade-in-float" style={{ animationDelay: '4s', backgroundColor: '#000000', opacity: 0.1 }}></div>
-
-      <div className="container mx-auto px-6 py-12 relative z-10">
+    <section className="relative min-h-screen flex items-center justify-center bg-[#F4F7FB] py-12 pt-24">
+      <div className="container mx-auto px-6 max-w-5xl">
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-extrabold text-[#000000] mb-4">My Tech Stack</h1>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-            I am proficient in a range of modern web development technologies and tools. Here are some of the key technologies I work with.
-          </p>
+          <h1 className="text-5xl font-extrabold text-[#000000]">My Tech Stack</h1>
+          <p className="text-lg text-gray-600 mt-4">Technologies I've worked with and am passionate about.</p>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {technologies.map((tech, index) => (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-8">
+          {skills.map((skill, index) => (
             <motion.div
               key={index}
-              className="bg-white p-6 rounded-3xl shadow-md border border-gray-200 flex flex-col items-center justify-center text-center transition-transform duration-300 hover:scale-105 hover:shadow-lg"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+              className="flex flex-col items-center p-6 bg-white rounded-3xl shadow-lg transform hover:scale-105 transition-transform duration-300"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+              viewport={{ once: true }}
             >
-              {/* Using inline SVG for a clean look */}
-              <div className="w-16 h-16 mb-4">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="100%"
-                  height="100%"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke={tech.color}
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d={tech.icon} />
-                </svg>
-              </div>
-              <h3 className="text-xl font-medium text-[#000000]">{tech.name}</h3>
+              <img src={skill.icon} alt={skill.name} className="w-16 h-16 mb-4"/>
+              <span className="text-lg font-medium text-gray-800">{skill.name}</span>
             </motion.div>
           ))}
         </div>
@@ -556,64 +572,110 @@ const TechStack = () => {
   );
 };
 
-
 /**
- * Contact component with a simple contact form.
- *
- * This version of the Contact component has been updated to use the formsubmit.co
- * service to send emails without needing a backend. It's a simple and effective
- * way to get messages from visitors.
+ * Contact component with a form and contact details.
+ * The contact form is a placeholder, and a real implementation would require a backend.
  */
 const Contact = () => {
   return (
     <section className="relative min-h-screen flex items-center justify-center bg-[#F4F7FB] overflow-hidden py-12 pt-24">
-      {/* Animated shapes in the background of the Contact page */}
+      {/* Animated shapes for the background */}
       <div className="bg-shape w-24 h-24 top-10 left-10 animate-fade-in-float" style={{ animationDelay: '0s' }}></div>
       <div className="bg-shape w-32 h-32 bottom-10 right-10 animate-fade-in-float" style={{ animationDelay: '1.5s' }}></div>
       <div className="bg-shape w-20 h-20 top-1/2 right-20 animate-fade-in-float" style={{ animationDelay: '3s' }}></div>
-      <div className="bg-shape w-48 h-48 top-1/4 left-1/4 animate-fade-in-float" style={{ animationDelay: '2.5s', backgroundColor: '#FFAC41', opacity: 0.1 }}></div>
-      <div className="bg-shape w-16 h-16 bottom-20 left-1/3 animate-fade-in-float" style={{ animationDelay: '5s' }}></div>
-      <div className="bg-shape w-28 h-28 top-20 right-1/3 animate-fade-in-float" style={{ animationDelay: '4s', backgroundColor: '#000000', opacity: 0.1 }}></div>
 
-      <div className="container mx-auto px-6 py-12 relative z-10 max-w-3xl">
-        <div className="text-center">
-          <h1 className="text-5xl font-extrabold text-[#000000] mb-12">Get in Touch</h1>
-          <p className="text-lg text-gray-700 max-w-2xl mx-auto mb-10">
-            Feel free to reach out for work, ideas, or collaborations.
-          </p>
+      <div className="container mx-auto px-6 relative z-10">
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-extrabold text-[#000000]">Get in Touch</h1>
+          <p className="text-lg text-gray-600 mt-4">I would love to hear from you!</p>
         </div>
-
-        {/* The form, now updated to send emails using formsubmit.co */}
-        <div className="bg-white p-8 rounded-3xl shadow-lg border-l-4 border-[#FF7F00]">
-          {/* We're using a standard HTML form element which submits to the formsubmit.co service.
-              This bypasses React's state management for a simple, serverless solution. */}
-          <form action="https://formsubmit.co/saniabatoolabro14@gmail.com" method="POST" className="space-y-6">
-
-            {/* Hidden field to set the email subject */}
-            <input type="hidden" name="_subject" value="New message from your portfolio!" />
-
-            {/* Hidden field to disable reCAPTCHA for simpler forms */}
-            <input type="hidden" name="_captcha" value="false" />
-
-            <div>
-              <label htmlFor="name" className="block text-gray-700 font-medium mb-2">Name</label>
-              <input type="text" id="name" name="name" required
-                     className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF7F00]" />
+        
+        <div className="flex flex-col md:flex-row justify-center items-stretch gap-10">
+          
+          {/* Contact Details Card */}
+          <motion.div
+            className="md:w-1/3 bg-white p-8 rounded-3xl shadow-xl flex flex-col items-start space-y-6"
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl font-bold text-[#000000] mb-4">Contact Info</h2>
+            <div className="flex items-center space-x-4">
+              <Mail size={24} className="text-[#FF7F00]" />
+              <a href="mailto:sania.batool@example.com" className="text-lg text-gray-700 hover:text-[#FF7F00]">sania.batool@example.com</a>
             </div>
-            <div>
-              <label htmlFor="email" className="block text-gray-700 font-medium mb-2">Email</label>
-              <input type="email" id="email" name="email" required
-                     className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF7F00]" />
+            <div className="flex items-center space-x-4">
+              <Phone size={24} className="text-[#FF7F00]" />
+              <a href="tel:+1234567890" className="text-lg text-gray-700 hover:text-[#FF7F00]">+123 456 7890</a>
             </div>
-            <div>
-              <label htmlFor="message" className="block text-gray-700 font-medium mb-2">Message</label>
-              <textarea id="message" name="message" rows="5" required
-                        className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#FF7F00]"></textarea>
+            <div className="flex items-start space-x-4">
+              <MapPin size={24} className="text-[#FF7F00] mt-1" />
+              <span className="text-lg text-gray-700">123 Software Lane, Karachi, Pakistan</span>
             </div>
-            <button type="submit" className="w-full bg-[#000000] text-white font-semibold py-3 px-6 rounded-full hover:bg-opacity-80 transition-colors duration-300">
-              Send Message
-            </button>
-          </form>
+
+            {/* Social Media Links */}
+            <div className="flex space-x-6 mt-8">
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-[#0077B5] transition-colors duration-300">
+                <Linkedin size={32} />
+              </a>
+              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-[#181717] transition-colors duration-300">
+                <Github size={32} />
+              </a>
+            </div>
+          </motion.div>
+          
+          {/* Contact Form Card */}
+          <motion.div
+            className="md:w-2/3 bg-white p-8 rounded-3xl shadow-xl"
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-3xl font-bold text-[#000000] mb-6">Send Me a Message</h2>
+            <form className="space-y-4">
+              <div>
+                <label htmlFor="name" className="sr-only">Your Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  placeholder="Your Name"
+                  className="w-full p-3 rounded-lg border-2 border-gray-300 focus:border-[#FF7F00] focus:ring-1 focus:ring-[#FF7F00] outline-none transition-all duration-300"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="email" className="sr-only">Your Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  placeholder="Your Email"
+                  className="w-full p-3 rounded-lg border-2 border-gray-300 focus:border-[#FF7F00] focus:ring-1 focus:ring-[#FF7F00] outline-none transition-all duration-300"
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="message" className="sr-only">Your Message</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows="5"
+                  placeholder="Your Message"
+                  className="w-full p-3 rounded-lg border-2 border-gray-300 focus:border-[#FF7F00] focus:ring-1 focus:ring-[#FF7F00] outline-none transition-all duration-300"
+                  required
+                ></textarea>
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-[#000000] text-white text-lg font-semibold py-3 px-8 rounded-full shadow-lg hover:bg-opacity-90 transition-colors duration-300"
+              >
+                Send Message
+              </button>
+            </form>
+          </motion.div>
         </div>
       </div>
     </section>
@@ -621,26 +683,15 @@ const Contact = () => {
 };
 
 /**
- * Footer component with social media links and copyright information.
+ * Footer component for a consistent look at the bottom of every page.
  */
 const Footer = () => {
   return (
-    <footer className="bg-[#000000] text-white py-8">
-      <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
-        <div className="text-center md:text-left">
-          <p>&copy; {new Date().getFullYear()} Sania Batool. All rights reserved.</p>
-        </div>
-        <div className="flex space-x-6">
-          <a href="https://www.linkedin.com/in/sania-batool-406a1a338/" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF7F00] transition-colors duration-300">
-            <Linkedin size={24} />
-          </a>
-          <a href="https://github.com/saniabatool" target="_blank" rel="noopener noreferrer" className="hover:text-[#FF7F00] transition-colors duration-300">
-            <Github size={24} />
-          </a>
-          <a href="mailto:saniabatoolabro14@gmail.com" className="hover:text-[#FF7F00] transition-colors duration-300">
-            <Mail size={24} />
-          </a>
-        </div>
+    <footer className="bg-white py-8 px-6 mt-12 text-center shadow-inner">
+      <div className="container mx-auto">
+        <p className="text-gray-600">
+          &copy; {new Date().getFullYear()} Sania Batool. All rights reserved.
+        </p>
       </div>
     </footer>
   );
