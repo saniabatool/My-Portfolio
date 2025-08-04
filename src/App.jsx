@@ -465,19 +465,22 @@ const Projects = () => {
       title: "AI Proposal Writer",
       description: "A web application that leverages AI to assist users in writing professional and effective proposals.",
       link: "https://ai-proposal-writer-bysania.netlify.app/",
-      image: "ai-proposal.png"
+      image:aiProposalImage,
+      
     },
     {
       title: "CV Generator",
       description: "An intuitive web tool that helps users create and customize their resumes and CVs with ease.",
       link: "https://cvgenerat.netlify.app/",
-      image: "cv-generator.png",
+      image: cvGeneratorImage,
+      
     },
     {
       title: "Waseema's Portfolio",
       description: "A modern and responsive personal portfolio website showcasing the skills and projects of Waseema.",
       link: "https://saniabatool.github.io/waseema-s-portfolio/",
-      image: "portfolio.png"
+       image: portfolioImage,
+     
     },
   ];
 
