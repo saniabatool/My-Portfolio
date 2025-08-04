@@ -702,7 +702,6 @@ const Contact = () => {
     );
 };
 
-
 /**
  * Footer component for the portfolio.
  */
